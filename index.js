@@ -76,3 +76,6 @@ app.post('/users', (req, res) => {
       res.json(results[0]);
     });
   });
+
+  //atualizar usuário
+
