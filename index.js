@@ -63,4 +63,16 @@ app.post('/users', (req, res) => {
   app.listen(port, () => {
     console.log(`Servidor rodando na porta ${port}`);
   });
-  
+
+  // Obter usuario por ID
+  app.get('/users/:id', (req, res) => {
+    const { id } = req.params;
+    connection.query('SELECT * FROM users WHERE id = ?', [id],
+      (err, results) => {
+      if (err) return res.status(500).json({ error: err.message });
+      if (results.length === 0){
+        return res.status(404).json({ error: 'usuario nao enconrtadp'});
+      }
+      res.json(results[0]);
+    });
+  });
