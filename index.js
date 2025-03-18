@@ -60,7 +60,7 @@ app.post('/users', (req, res) => {
   });
   
 
-  app.listen(port, () => {
+  const server = app.listen(port, () => {
     console.log(`Servidor rodando na porta ${port}`);
   });
 
@@ -71,11 +71,37 @@ app.post('/users', (req, res) => {
       (err, results) => {
       if (err) return res.status(500).json({ error: err.message });
       if (results.length === 0){
-        return res.status(404).json({ error: 'usuario nao enconrtadp'});
+        return res.status(404).json({ error: 'usuario nao encontrado'});
       }
       res.json(results[0]);
     });
   });
 
   //atualizar usuário
+  app.put('/users/:id', (req, res) => {
+    const { id } = req.params;
+    const { name, email } = req.body;
+    const UPDATE_USER_QUERY = `UPDATE users SET name = ?, email = ? WHERE id = ?`;
+    connection.query(UPDATE_USER_QUERY, [name, email, id], (err) => {
+      if (err) return res.status(500).json({ error: err.message });
+      if (results.affectedRows === 0){
+        return res.status(404).json({ error: 'usuario nao encontrado'});
+      }
+      res.json({ message: 'Usuário atualizado com sucesso' });
+    });
+  });
 
+  //deletar usuario
+  app.delete('/users/:id', (req, res) => {
+    const { id } = req.params;
+    const DELETE_USER_QUERY = `DELETE FROM users WHERE id = ?`;
+    connection.query(DELETE_USER_QUERY, [id], (err, results) => {
+      if (err) return res.status(500).json({ error: err.message });
+      if (results.affectedRows === 0){
+        return res.status(404).json({ error: 'usuario nao encontrado'});
+      }
+      res.json({ message: 'Usuário deletado com sucesso' });
+    });
+  });
+
+module.exports = { app, server, connection }; 
